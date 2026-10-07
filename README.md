@@ -21,8 +21,8 @@ Las clases se realizarán a través de **Zoom**. Les recomendamos descargar e in
 
 | Recurso | Link |
 |---------|------|
-| 📹 Zoom (clases en vivo) | [Ingresar a Zoom](https://zoom.us) |
-| 📅 Calendario de clases | [Ver calendario](https://google.com) |
+| 📹 Zoom (clases en vivo) | [Ingresar a Zoom](https://us06web.zoom.us/j/82651781299?pwd=9VUREClwYryHGsSQgJqRQPBmO7yg04.1) |
+| 📅 Calendario de clases | [Ver calendario](https://docs.google.com/spreadsheets/d/1PGbfvcn0it2fwQ3UzfdtOthbcmGMqzx1cS5Wc6na018/edit?usp=sharing) |
 | 🎓 Plataforma de estudio | [learning-pro.skillnest.com](https://learning-pro.skillnest.com/) |
 
 ---
