@@ -1,5 +1,5 @@
 # SKILLNEST — Bootcamp Especialización IA Accenture 2026
-<img src="https://learning.skillnest.com/wp-content/uploads/2025/01/JAVA.png" alt="Bootcamp Especialización IA Accenture" style="width:400px;">
+<img src="/assets/skillnest_accenture.png" alt="Bootcamp Especialización IA Accenture" style="width:400px;">
 
 ---
 
