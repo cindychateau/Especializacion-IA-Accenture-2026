@@ -1,0 +1,8 @@
+1) git init - Inicializa una carpeta como un repositorio localmente
+2) git branch -M main - Cambiamos a la rama main 
+3) git add NombreArchivo o git add .
+4) git commit -m "Mensaje para el commit"
+5) git remote add origin url-del-github
+6) git push -u origin master o git push -u origin main
+
+Para subir cambios: 3, 4, 6
