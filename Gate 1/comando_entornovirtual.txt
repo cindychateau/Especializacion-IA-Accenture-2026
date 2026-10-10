@@ -1,0 +1,9 @@
+Mac o UNIX:
+source venv/bin/activate
+
+Windows y estoy usando Gitbash:
+source venv/Scripts/activate
+
+Windows y estoy usando Powershell o CMD:
+./venv/Scripts/activate
+./venv/Scripts/Activate.ps1
