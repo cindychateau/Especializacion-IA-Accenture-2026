@@ -46,3 +46,31 @@ try:
     print(estudiante["email"])
 except KeyError:
     print("La clave no existe")
+
+
+def dividir():
+    try:
+        num1 = int(input("Ingresa el primer numero: "))
+        num2 = int(input("Ingresa el segundo numero: "))
+        resultado = num1/num2
+        print(f"El resultado es: {resultado}")
+    except ZeroDivisionError:
+        print("La calculadora no puede dividirte entre cero")
+    except ValueError:
+        print("La calculadora solo permite números enteros")
+    except Exception as error: #Atrapa erores de manera general, error tendrá los detalles de la excepción
+        print(f"Ocurrió un error inesperado: {error}")
+    finally:
+        print("¡Gracias por usas la calculadora!")
+
+#dividir()
+
+try:
+    bebidas = ["Coca-cola", "Agua saborizada", "Chocolate Caliente"]
+    bebida_deseada = input("Ingresa la bebida que quieres: ")
+    if bebida_deseada not in bebidas:
+        raise ValueError(f"Esa bebida no está disponible") #raise -> levantando una excepción
+    else:
+        print(f"Tu bebida {bebida_deseada} está lista")
+except ValueError as error:
+    print(f"Error: {error}")
