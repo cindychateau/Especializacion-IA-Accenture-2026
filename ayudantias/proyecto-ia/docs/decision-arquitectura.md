@@ -31,7 +31,7 @@ Los requisitos que necesito cumplir son:
 
 | Criterio | Nombre exacto del modelo A | Nombre exacto del modelo B |
 |---|---|---|
-| TSarifa de entrada en UD por millón de tokens | | |
+| Tarifa de entrada en UD por millón de tokens | | |
 | Tarifa de salida en USD por millón de tokens | | |
 | Latencias observadas en segundos | | |
 | Latencia promedio en segundos | | |
