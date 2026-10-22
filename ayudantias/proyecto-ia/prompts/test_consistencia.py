@@ -1,7 +1,5 @@
 import json
 import time
-from datetime import datetime
-from pathlib import Path
 
 from prompts.banco import BANCO_DE_PROMPTS
 from src.consumir_gemini import (
@@ -11,81 +9,56 @@ from src.consumir_gemini import (
     parsear_respuesta_json,
 )
 
+INTENTOS = 3
+registro = {}
 
-def main():
-    # Cada ejecución conserva su propio registro para comparar antes y después.
-    registro = {
-        "fecha_hora_local": datetime.now().astimezone().isoformat(),
-        "validacion": "JSON tras limpieza de Markdown, claves, tipos y categorías",
-        "banco_probado": BANCO_DE_PROMPTS,
-        "resultados": {},
+for prompt in BANCO_DE_PROMPTS:
+    print(f"Probando {prompt['nombre']}...")
+
+    exitos = 0
+    fallos_formato = 0
+    errores_api = 0
+
+    for intento in range(1, INTENTOS + 1):
+        try:
+            url, body = armar_peticion(
+                prompt["ejemplo_usuario"],
+                prompt["system_instruction"],
+                prompt.get("response_schema"),
+            )
+            respuesta = enviar_peticion(url, body)
+            texto = extraer_texto(respuesta)
+            datos = parsear_respuesta_json(texto, prompt["categorias_permitidas"])
+
+            if all(clave in datos for clave in prompt["claves_esperadas"]):
+                exitos += 1
+                print(f"  intento {intento}: válido {datos}")
+            else:
+                fallos_formato += 1
+                print(f"  intento {intento} falló: faltan claves esperadas")
+
+        except RuntimeError as error:
+            # Falló la API o la red: no es culpa del prompt
+            errores_api += 1
+            print(f"  intento {intento} error de API: {error}")
+
+        except ValueError as error:
+            # El modelo respondió, pero no con el JSON que esperábamos
+            fallos_formato += 1
+            print(f"  intento {intento} falló: {error}")
+
+        time.sleep(1)
+
+    print(f"{prompt['nombre']}: {exitos}/{INTENTOS} respuestas válidas\n")
+
+    registro[prompt["nombre"]] = {
+        "intentos": INTENTOS,
+        "exitos": exitos,
+        "fallos_formato": fallos_formato,
+        "errores_api": errores_api,
     }
 
-    for prompt in BANCO_DE_PROMPTS:
-        resumen = {
-            "intentos": 3,
-            "exitos": 0,
-            "fallos_formato": 0,
-            "errores_api": 0,
-            "detalle": [],
-        }
-        registro["resultados"][prompt["nombre"]] = resumen
+with open("prompts/registro_resultados.json", "w", encoding="utf-8") as archivo:
+    json.dump(registro, archivo, indent=2, ensure_ascii=False)
 
-        for intento in range(1, 4):
-            detalle = {"intento": intento}
-
-            try:
-                url, body = armar_peticion(
-                    prompt["ejemplo_usuario"],
-                    prompt["system_instruction"],
-                    prompt.get("response_schema"),
-                )
-                respuesta = enviar_peticion(url, body)
-                texto = extraer_texto(respuesta)
-
-            except RuntimeError as error:
-                resumen["errores_api"] += 1
-                detalle.update(estado="error_api", error=str(error))
-
-            else:
-                detalle["modelo_reportado"] = respuesta.get("modelVersion")
-                detalle["respuesta_original"] = texto
-
-                try:
-                    datos = parsear_respuesta_json(
-                        texto, prompt["categorias_permitidas"]
-                    )
-                    if not all(k in datos for k in prompt["claves_esperadas"]):
-                        raise ValueError("Faltan claves esperadas.")
-
-                except ValueError as error:
-                    resumen["fallos_formato"] += 1
-                    detalle.update(estado="fallo_formato", error=str(error))
-
-                else:
-                    resumen["exitos"] += 1
-                    detalle.update(estado="valida", datos=datos)
-
-            resumen["detalle"].append(detalle)
-            print(f"{prompt['nombre']} - intento {intento}: {detalle['estado']}")
-            time.sleep(1)
-
-        print(
-            f"{prompt['nombre']}: {resumen['exitos']}/3 válidas; "
-            f"{resumen['fallos_formato']} fallos de formato; "
-            f"{resumen['errores_api']} errores de API.\n"
-        )
-
-    carpeta = Path(__file__).resolve().parent
-    ruta = carpeta / "registro_resultados.json"
-    sello = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-    historico = carpeta / f"registro_{sello}.json"
-    contenido = json.dumps(registro, indent=2, ensure_ascii=False)
-    ruta.write_text(contenido, encoding="utf-8")
-    historico.write_text(contenido, encoding="utf-8")
-    print("Registro más reciente:", ruta)
-    print("Copia de esta ejecución:", historico)
-
-
-if __name__ == "__main__":
-    main()
+print("Registro guardado en prompts/registro_resultados.json")
